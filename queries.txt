@@ -1,0 +1,76 @@
+1.What is the top-selling category of items? Per Country?
+WITH RankedCategories AS (
+    SELECT 
+        country, 
+        product_category, 
+        SUM(qty) AS total_sales,
+        ROW_NUMBER() OVER (PARTITION BY country ORDER BY SUM(qty) DESC) AS rank
+    FROM your_table_name
+    GROUP BY country, product_category
+)
+SELECT 
+    country, 
+    product_category, 
+    total_sales
+FROM RankedCategories
+WHERE rank = 1;
+
+2.How does the popularity of products change throughout the year? Per Country?
+SELECT 
+    country, 
+    product_category, 
+    EXTRACT(YEAR FROM datetime) AS year, 
+    EXTRACT(MONTH FROM datetime) AS month, 
+    SUM(qty) AS total_sales
+FROM your_table_name
+GROUP BY 
+    country, 
+    product_category, 
+    EXTRACT(YEAR FROM datetime),
+    EXTRACT(MONTH FROM datetime)
+ORDER BY 
+    country, 
+    year, 
+    month, 
+    total_sales DESC;
+
+
+3.Which locations see the highest traffic of sales?
+SELECT 
+    country,
+    city,
+    SUM(qty) AS total_sales
+FROM abiding-equator-433112-r5.project2_rev
+GROUP BY 
+    country,
+    city
+ORDER BY 
+    total_sales DESC
+LIMIT 10;
+
+SELECT 
+    country,
+    city,
+    SUM(qty) AS total_sales
+FROM abiding-equator-433112-r5.project2_rev
+GROUP BY 
+    country,
+    city
+ORDER BY 
+    total_sales DESC
+LIMIT 10;
+
+
+
+4.What times have the highest traffic of sales? Per Country?
+SELECT 
+    country,
+    EXTRACT(HOUR FROM datetime) AS hour_of_day,
+    SUM(qty) AS total_sales
+FROM abiding-equator-433112-r5.project2_rev
+GROUP BY 
+    country,
+    hour_of_day
+ORDER BY 
+    country,
+    hour_of_day;
